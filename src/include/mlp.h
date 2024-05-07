@@ -21,6 +21,8 @@ typedef struct {
   NEURON **n;
 } PERCEPTRON;
 
+int perceptron_create(PERCEPTRON **p, const float *in );
+
 void neuron_adder( NEURON *n, uint16_t inlen );
 
 int perceptron_neuron_create( PERCEPTRON *p );

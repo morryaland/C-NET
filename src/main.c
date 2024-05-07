@@ -6,16 +6,20 @@
 
 int main()
 {
-    PERCEPTRON *p = malloc(sizeof(PERCEPTRON));
-    float *in = malloc(INLEN * sizeof(float));
-    memset(in, 1, INLEN * sizeof(float));
-    float *outbuff = calloc(HIDLEN, sizeof(float));
-    p->i = in;
-    p->o = outbuff;
-    float *o = calloc(OUTLEN, sizeof(float));
+  PERCEPTRON *p = malloc(sizeof(PERCEPTRON));
+  float *in = calloc(INLEN, sizeof(float));
+  float *o = calloc(OUTLEN, sizeof(float));
+  for (int i = 0; i < INLEN; i++)
+    in[i] = (float)(rand()%2);
+  perceptron_create(&p, in);
+  for (int lol = 0; lol < 10; lol++)
+  {
     perceptron_start(p, o);
     for (int i = 0; i < OUTLEN; i++) {
-        printf("%f ", o[i]);
+      printf("%d ", (int)o[i]);
     }
-    return 0;
+    putchar('\n');
+    memset(o, 0, OUTLEN * sizeof(float));
+  }
+  return 0;
 }
