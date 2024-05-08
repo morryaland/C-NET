@@ -12,14 +12,19 @@ void neuron_adder( NEURON *n, uint16_t inlen )
     n->o += n->i[i] * n->w[i];
 }
 
-int perceptron_create(PERCEPTRON **p, const float *in )
+int perceptron_create( PERCEPTRON **p )
 {
   /*!alloc!*/
   (*p)->i = malloc(INLEN * sizeof(float)); 
   (*p)->o = malloc(HIDLEN * sizeof(float)); 
-  memcpy((*p)->i, in, INLEN * sizeof(float));
   if (perceptron_neuron_create(*p) < 0)
     return -1; 
+  return 0;
+}
+
+int perceptron_set_inputs( PERCEPTRON *p, const float *in )
+{
+  memcpy(p->i, in, INLEN * sizeof(float));
   return 0;
 }
 
@@ -41,7 +46,7 @@ int perceptron_neuron_create( PERCEPTRON *p )
         p->n[i][j].w = malloc(INLEN * sizeof(float));
 
         for (int m = 0; m < INLEN; m++) {
-          p->n[i][j].w[m] = 0.5f;
+          p->n[i][j].w[m] = 0.5f + (rand()%2)/10.0f;
         }
       }
     }

@@ -10,8 +10,8 @@ PATH_OBJ=./obj/
 PATH_LIB=./lib/
 PATH_BIN=./bin/
 
-SRC=main.c net.c spng.c
-OBJ=main.o net.o spng.o
+SRC=main.c net.c
+OBJ=main.o net.o
 LIB=
 
 ifeq ($(OS),WIN)
