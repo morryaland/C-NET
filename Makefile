@@ -10,15 +10,15 @@ PATH_OBJ=./obj/
 PATH_LIB=./lib/
 PATH_BIN=./bin/
 
-SRC=main.c net.c
-OBJ=main.o net.o
+SRC=main.c net.c spng.c
+OBJ=main.o net.o spng.o
 LIB=
 
 ifeq ($(OS),WIN)
 	BUILD_NAME:= $(addsuffix .exe,$(BUILD_NAME))
 endif
 
-FLAGS+=-lm
+FLAGS+=-lm -lz
 CFLAGS+=-Wall -O$(OP) -Wcomment
 
 SRC:= $(addprefix $(PATH_SRC),$(SRC) )

@@ -7,12 +7,14 @@
 void neuron_adder( NEURON *n, uint16_t inlen )
 {
   n->o = 0;
+  /* умножаем входные данные на веса нейрона и суммируем в выход */
   for (int i = 0; i < inlen; i++)
     n->o += n->i[i] * n->w[i];
 }
 
 int perceptron_create(PERCEPTRON **p, const float *in )
 {
+  /*!alloc!*/
   (*p)->i = malloc(INLEN * sizeof(float)); 
   (*p)->o = malloc(HIDLEN * sizeof(float)); 
   memcpy((*p)->i, in, INLEN * sizeof(float));
@@ -23,15 +25,24 @@ int perceptron_create(PERCEPTRON **p, const float *in )
 
 int perceptron_neuron_create( PERCEPTRON *p )
 {
-    p->n = calloc(LAYERS, sizeof(NEURON*));
+    /* создаём массив указателей на нейроны (фигурирует в роли слоёв) */
+    /*!alloc!*/
+    p->n = malloc(LAYERS * sizeof(NEURON*));
     if (p->n == NULL)
       return -1;
+
     for (int i = 0; i < LAYERS; i++) {
-      p->n[i] = calloc(HIDLEN, sizeof(NEURON));
+      /* инициализируем слой нейронами */
+      /*!alloc!*/
+      p->n[i] = malloc(HIDLEN * sizeof(NEURON));
+
       for (int j = 0; j < HIDLEN; j++) {
+        /*!alloc!*/
         p->n[i][j].w = malloc(INLEN * sizeof(float));
-        for (int m = 0; m < INLEN; m++)
-          p->n[i][j].w[m] = 0.5f + (rand()%2)/10.0f;
+
+        for (int m = 0; m < INLEN; m++) {
+          p->n[i][j].w[m] = 0.5f;
+        }
       }
     }
     return 0;
@@ -39,27 +50,28 @@ int perceptron_neuron_create( PERCEPTRON *p )
 
 int perceptron_start( PERCEPTRON *p, float *o )
 {
+  /* чистка выходов */
+  memset(o, 0, OUTLEN * sizeof(float));
   memset(p->o, 0,HIDLEN * sizeof(float));
-  for (int i = 0; i < LAYERS; i++) {
-    if (i == LAYERS - 1)
-      for (int j = 0; j < OUTLEN; j++) {
-        p->n[i][j].i = p->o;
-        neuron_adder(&(p->n[i][j]), HIDLEN);
-        o[j] += activation_function(ReLU, p->n[i][j].o);
-      }
-    else if (!i) 
-      for (int j = 0; j < HIDLEN; j++) {
-        p->n[i][j].i = p->i;
-        neuron_adder(&(p->n[i][j]), INLEN);
-        p->o[j] += activation_function(ReLU, p->n[i][j].o);
-      }
-    else {
-      for (int j = 0; j < HIDLEN; j++) {
-        p->n[i][j].i = p->o;
-        neuron_adder(&(p->n[i][j]), HIDLEN);
-        p->o[j] += activation_function(ReLU, p->n[i][j].o);
-      }
+  
+  for (int i = 0; i < HIDLEN; i++) {
+    p->n[0][i].i = p->i;
+    neuron_adder(&(p->n[0][i]), INLEN);
+    p->o[0] += activation_function(ReLU, p->n[0][i].o);
+  }
+  
+  for (int i = 1; i < LAYERS - 1; i++) {
+    for (int j = 0; j < HIDLEN; j++) {
+      p->n[i][j].i = p->o;
+      neuron_adder(&(p->n[i][j]), HIDLEN);
+      p->o[j] += p->n[i][j].o;
     }
+  }
+
+  for (int i = 0; i < OUTLEN; i++) {
+    p->n[LAYERS - 1][i].i = p->o;
+    neuron_adder(&(p->n[LAYERS - 1][i]), HIDLEN);
+    o[i] += activation_function(ReLU, p->n[LAYERS - 1][i].o);
   }
   return 0;
 }
