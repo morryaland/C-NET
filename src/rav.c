@@ -24,7 +24,6 @@ int rav_read_file( char *file_name, float *in, int *num)
     *(c + i * 4 + 2) = getc(rav);
     *(c + i * 4 + 3) = getc(rav);
   }
-  *num = strtol( file_name, NULL, 10);
   fclose(rav);
   return 0;
 }

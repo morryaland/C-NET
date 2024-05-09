@@ -6,7 +6,7 @@
 
 #define INLEN 256
 #define OUTLEN 10
-#define SMOOTH 1000
+#define SMOOTH 100
 
 typedef struct {
   float  o;

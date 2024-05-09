@@ -90,7 +90,7 @@ float error_find( float *o, int net_num, int real_num )
 {
   //return -(1 + o[real_num] - o[net_num]) / SMOOTH;
   if (net_num == real_num)
-    return 1.0f / SMOOTH;
+    return 0.5f / SMOOTH;
   else
     return -1.0f / SMOOTH;
 }

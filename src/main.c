@@ -27,14 +27,19 @@ int main()
 
   perceptron_create(&p);
 
-  for (int itr = 0; itr < 100; itr++) {
+  int r = 0;
+  for (int itr = 0; itr < 1000; itr++) {
     dir = opendir(LEARN_DIR);
+    r = rand()%10;
     for (; (ent = readdir(dir)) != NULL ;) {
       if (ent->d_name[0] == '.')
         continue;
+      real_num = strtol( ent->d_name, NULL, 10);
+      if (real_num != r)
+        continue;
       
       rav_read_file(ent->d_name, in, &real_num);
-    
+
       perceptron_set_inputs(p, in);
       perceptron_start(p, o);
       net_num = out_max(o);
@@ -52,12 +57,15 @@ int main()
     }
     closedir(dir);
   }
-  for (int n = 0; n < 10; n++)
-    for (int i = 0; i < 16; i++) {
-      for (int j = 0; j < 16; j++) {
-        printf("%d\t", (int)(p->n[n].w[j + i * 16]* 100));
-      }
-      putchar('\n');
+  int w;
+  for (int i = 0; i < 16; i++) {
+    for (int j = 0; j < 16; j++) {
+      w = 0;
+      for (int n = 0; n < 10; n++)
+        w += p->n[n].w[j + i * 16];
+      printf("%d", w);
     }
+    putchar('\n');
+  }
   return 0;
 }
